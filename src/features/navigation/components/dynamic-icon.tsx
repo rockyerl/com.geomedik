@@ -1,6 +1,13 @@
 import React from "react";
 import {
   LayoutDashboard,
+  Map,
+  Building2,
+  Hospital,
+  ClipboardCheck,
+  Stethoscope,
+  Activity,
+  PackageCheck,
   Users,
   ShieldCheck,
   FileBarChart,
@@ -17,6 +24,20 @@ export function DynamicIcon({ name, ...props }: DynamicIconProps) {
   switch (name) {
     case "LayoutDashboard":
       return <LayoutDashboard {...props} />;
+    case "Map":
+      return <Map {...props} />;
+    case "Building2":
+      return <Building2 {...props} />;
+    case "Hospital":
+      return <Hospital {...props} />;
+    case "ClipboardCheck":
+      return <ClipboardCheck {...props} />;
+    case "Stethoscope":
+      return <Stethoscope {...props} />;
+    case "Activity":
+      return <Activity {...props} />;
+    case "PackageCheck":
+      return <PackageCheck {...props} />;
     case "Users":
       return <Users {...props} />;
     case "ShieldCheck":

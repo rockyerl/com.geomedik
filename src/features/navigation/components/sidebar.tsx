@@ -9,7 +9,7 @@ import { logoutAction } from "@/features/auth/actions";
 import type { NavigationCategoryGroup } from "../service";
 import type { SessionPayload } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
-import { LogOut, Shield, Menu, X, Layers } from "lucide-react";
+import { LogOut, Shield, Menu, X, Crosshair } from "lucide-react";
 
 interface SidebarProps {
   categories: NavigationCategoryGroup[];
@@ -36,15 +36,15 @@ export function Sidebar({ categories, currentUser }: SidebarProps) {
   const navContent = (
     <div className="flex flex-col h-full bg-slate-900 text-slate-200">
       {/* Brand Header */}
-      <div className="flex items-center justify-between h-16 px-6 border-b border-slate-800 bg-slate-950/40">
+      <div className="flex items-center justify-between h-16 px-5 border-b border-slate-800 bg-slate-950/60">
         <Link href="/dashboard" className="flex items-center gap-3 group">
-          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-indigo-600 text-white font-bold shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-            <Layers className="w-5 h-5" />
+          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-emerald-600 text-white font-bold shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+            <Crosshair className="w-5 h-5" />
           </div>
           <div>
-            <span className="font-bold text-white tracking-tight text-base block">SUNDAWA</span>
-            <span className="text-[10px] text-slate-400 font-medium block uppercase tracking-wider">
-              Template Starter
+            <span className="font-bold text-white tracking-tight text-base block">SI-GEOMEDIK</span>
+            <span className="text-[10px] text-emerald-400 font-semibold block uppercase tracking-wider">
+              Kemhan RI • GIS Kesehatan
             </span>
           </div>
         </Link>
@@ -57,7 +57,7 @@ export function Sidebar({ categories, currentUser }: SidebarProps) {
       </div>
 
       {/* Dynamic Nav Items */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 py-5 space-y-5">
         {categories.length === 0 ? (
           <div className="px-3 py-4 text-xs text-slate-500 bg-slate-800/40 rounded-lg text-center">
             Tidak ada menu yang diizinkan untuk role Anda.
@@ -65,7 +65,7 @@ export function Sidebar({ categories, currentUser }: SidebarProps) {
         ) : (
           categories.map((group) => (
             <div key={group.category} className="space-y-1">
-              <h4 className="px-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              <h4 className="px-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
                 {group.category}
               </h4>
               <nav className="space-y-1">
@@ -81,9 +81,9 @@ export function Sidebar({ categories, currentUser }: SidebarProps) {
                       href={item.path}
                       onClick={() => setIsOpenMobile(false)}
                       className={cn(
-                        "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group",
+                        "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group",
                         isActive
-                          ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/30"
+                          ? "bg-emerald-600 text-white shadow-sm shadow-emerald-600/30"
                           : "text-slate-300 hover:text-white hover:bg-slate-800/70"
                       )}
                     >
@@ -108,7 +108,7 @@ export function Sidebar({ categories, currentUser }: SidebarProps) {
       <div className="p-4 border-t border-slate-800 bg-slate-950/60">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-xs text-indigo-400">
+            <div className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-xs text-emerald-400 shrink-0">
               {currentUser.name
                 .split(" ")
                 .map((n) => n[0])
@@ -124,9 +124,9 @@ export function Sidebar({ categories, currentUser }: SidebarProps) {
         </div>
 
         <div className="flex items-center justify-between pt-1">
-          <Badge variant={getRoleVariant(currentUser.roleCode)}>
-            <Shield className="w-3 h-3" />
-            {currentUser.roleName}
+          <Badge variant={getRoleVariant(currentUser.roleCode)} className="truncate max-w-[175px]">
+            <Shield className="w-3 h-3 shrink-0" />
+            <span className="truncate">{currentUser.roleName}</span>
           </Badge>
 
           <form action={logoutAction}>

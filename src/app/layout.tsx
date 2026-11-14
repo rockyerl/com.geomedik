@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SUNDAWA - Fullstack Next.js Template Starter",
+  title: "SI-GEOMEDIK | Sistem Informasi Geomedik Kemhan RI",
   description:
-    "Standardized Next.js Fullstack Architecture with Auth, Dynamic RBAC, User & Role Management",
+    "Sistem Informasi Geospasial Fasilitas Kesehatan, SDM, Alat Kesehatan, dan Material Kesehatan Pertahanan",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
