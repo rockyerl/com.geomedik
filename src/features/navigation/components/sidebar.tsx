@@ -9,7 +9,17 @@ import { logoutAction } from "@/features/auth/actions";
 import type { NavigationCategoryGroup } from "../service";
 import type { SessionPayload } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
-import { LogOut, Shield, Menu, X, Crosshair } from "lucide-react";
+import {
+  LogOut,
+  Shield,
+  Menu,
+  X,
+  Crosshair,
+  LayoutDashboard,
+  Map,
+  Hospital,
+  BarChart3,
+} from "lucide-react";
 
 interface SidebarProps {
   categories: NavigationCategoryGroup[];
@@ -33,11 +43,42 @@ export function Sidebar({ categories, currentUser }: SidebarProps) {
     }
   };
 
+  const quickMobileLinks = [
+    {
+      href: "/dashboard",
+      label: "Beranda",
+      icon: LayoutDashboard,
+      exact: true,
+    },
+    {
+      href: "/dashboard/gis",
+      label: "Peta GIS",
+      icon: Map,
+      exact: false,
+    },
+    {
+      href: "/dashboard/facilities",
+      label: "Faskes",
+      icon: Hospital,
+      exact: false,
+    },
+    {
+      href: "/dashboard/analytics",
+      label: "Simulasi",
+      icon: BarChart3,
+      exact: false,
+    },
+  ];
+
   const navContent = (
     <div className="flex flex-col h-full bg-slate-900 text-slate-200">
       {/* Brand Header */}
       <div className="flex items-center justify-between h-16 px-5 border-b border-slate-800 bg-slate-950/60">
-        <Link href="/dashboard" className="flex items-center gap-3 group">
+        <Link
+          href="/dashboard"
+          onClick={() => setIsOpenMobile(false)}
+          className="flex items-center gap-3 group"
+        >
           <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-emerald-600 text-white font-bold shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
             <Crosshair className="w-5 h-5" />
           </div>
@@ -51,6 +92,7 @@ export function Sidebar({ categories, currentUser }: SidebarProps) {
         <button
           onClick={() => setIsOpenMobile(false)}
           className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+          aria-label="Tutup Menu"
         >
           <X className="w-5 h-5" />
         </button>
@@ -81,7 +123,7 @@ export function Sidebar({ categories, currentUser }: SidebarProps) {
                       href={item.path}
                       onClick={() => setIsOpenMobile(false)}
                       className={cn(
-                        "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group",
+                        "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group",
                         isActive
                           ? "bg-emerald-600 text-white shadow-sm shadow-emerald-600/30"
                           : "text-slate-300 hover:text-white hover:bg-slate-800/70"
@@ -90,11 +132,11 @@ export function Sidebar({ categories, currentUser }: SidebarProps) {
                       <DynamicIcon
                         name={item.icon}
                         className={cn(
-                          "w-4 h-4 transition-transform group-hover:scale-110",
+                          "w-4 h-4 shrink-0 transition-transform group-hover:scale-110",
                           isActive ? "text-white" : "text-slate-400 group-hover:text-slate-200"
                         )}
                       />
-                      <span>{item.title}</span>
+                      <span className="truncate">{item.title}</span>
                     </Link>
                   );
                 })}
@@ -144,12 +186,14 @@ export function Sidebar({ categories, currentUser }: SidebarProps) {
   );
 
   return (
-    <>
-      {/* Mobile Trigger Button */}
-      <div className="lg:hidden fixed top-3 left-4 z-40">
+    <div className="shrink-0">
+      {/* Mobile Top-Left Trigger Button */}
+      <div className="lg:hidden fixed top-3 left-3.5 z-40">
         <button
+          type="button"
           onClick={() => setIsOpenMobile(true)}
-          className="p-2 rounded-lg bg-slate-900 text-white shadow-lg border border-slate-700"
+          aria-label="Buka Navigasi"
+          className="p-2 rounded-lg bg-slate-900 text-white shadow-md border border-slate-700 active:scale-95 transition-transform"
         >
           <Menu className="w-5 h-5" />
         </button>
@@ -160,18 +204,52 @@ export function Sidebar({ categories, currentUser }: SidebarProps) {
         {navContent}
       </aside>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 px-2 py-1.5 flex items-center justify-around shadow-2xl">
+        {quickMobileLinks.map((item) => {
+          const IconComp = item.icon;
+          const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setIsOpenMobile(false)}
+              className={cn(
+                "flex flex-col items-center justify-center gap-0.5 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors min-w-[58px]",
+                active ? "text-emerald-400 bg-emerald-500/10" : "text-slate-400 hover:text-white"
+              )}
+            >
+              <IconComp className="w-4 h-4" />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+
+        <button
+          type="button"
+          onClick={() => setIsOpenMobile(true)}
+          className={cn(
+            "flex flex-col items-center justify-center gap-0.5 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors min-w-[58px]",
+            isOpenMobile ? "text-emerald-400 bg-emerald-500/10" : "text-slate-400 hover:text-white"
+          )}
+        >
+          <Menu className="w-4 h-4" />
+          <span>Menu</span>
+        </button>
+      </nav>
+
+      {/* Mobile Slide-Over Drawer */}
       {isOpenMobile && (
         <div className="fixed inset-0 z-50 lg:hidden flex">
           <div
             className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm transition-opacity"
             onClick={() => setIsOpenMobile(false)}
           />
-          <div className="relative w-72 max-w-xs h-full z-10 animate-in slide-in-from-left duration-200">
+          <div className="relative w-72 max-w-[82vw] h-full z-10 animate-in slide-in-from-left duration-200 shadow-2xl">
             {navContent}
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

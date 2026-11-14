@@ -1,7 +1,8 @@
 import React from "react";
 import { requirePermission, hasPermission } from "@/lib/auth/context";
-import { getUsers, UserManagementView } from "@/features/users";
-import { getRoles } from "@/features/roles";
+import { getUsers } from "@/features/users/service";
+import { UserManagementView } from "@/features/users/components/user-management-view";
+import { getRoles } from "@/features/roles/service";
 
 export default async function UsersPage() {
   // Enforce server-side authorization: user MUST have "users.read" permission

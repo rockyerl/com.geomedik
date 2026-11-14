@@ -1,2 +1,2 @@
 export * from "./service";
-export * from "./components/audit-logs-view";
+export { AuditLogsView } from "./components/audit-logs-view";

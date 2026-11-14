@@ -26,9 +26,12 @@ export default function LoginPage() {
         {/* Card Form */}
         <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 border border-slate-100">
           <div className="mb-6 pb-4 border-b border-slate-100">
-            <h2 className="text-lg font-bold text-slate-900 tracking-tight">Autentikasi Personel</h2>
+            <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+              Autentikasi Personel
+            </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Masukkan kredensial sesuai peran otorisasi (Pusdatin / Verifikator Ditkes / Operator Faskes).
+              Masukkan kredensial sesuai peran otorisasi (Pusdatin / Verifikator Ditkes / Operator
+              Faskes).
             </p>
           </div>
 

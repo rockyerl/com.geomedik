@@ -11,6 +11,8 @@ import {
   Users,
   ShieldCheck,
   FileBarChart,
+  BarChart3,
+  UploadCloud,
   Settings,
   HelpCircle,
   LucideProps,
@@ -44,6 +46,10 @@ export function DynamicIcon({ name, ...props }: DynamicIconProps) {
       return <ShieldCheck {...props} />;
     case "FileBarChart":
       return <FileBarChart {...props} />;
+    case "BarChart3":
+      return <BarChart3 {...props} />;
+    case "UploadCloud":
+      return <UploadCloud {...props} />;
     case "Settings":
       return <Settings {...props} />;
     default:
