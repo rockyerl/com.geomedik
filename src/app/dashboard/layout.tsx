@@ -19,7 +19,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         <AppHeader currentUser={session} />
-        <main className="flex-1 p-3.5 sm:p-6 md:p-8 pb-24 lg:pb-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-3.5 sm:p-6 md:p-8 pb-28 lg:pb-8 max-w-7xl w-full mx-auto">
           {children}
         </main>
       </div>

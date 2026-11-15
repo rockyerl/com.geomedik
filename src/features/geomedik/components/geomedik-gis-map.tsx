@@ -37,6 +37,7 @@ import {
   Download,
   Globe,
   RefreshCw,
+  ArrowRight,
 } from "lucide-react";
 
 interface GisMapViewProps {
@@ -764,7 +765,7 @@ export function GisMapView({
           type="button"
           onClick={handlePingCarto}
           disabled={isPingingCarto}
-          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-white shrink-0 transition-colors disabled:opacity-50"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-white shrink-0 transition-colors disabled:opacity-50"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isPingingCarto ? "animate-spin" : ""}`} />
           {isPingingCarto ? "Menguji..." : "Uji Koneksi CARTO API"}
@@ -949,45 +950,129 @@ export function GisMapView({
 
             <div
               ref={handleMapContainerRef}
-              className="w-full z-10"
+              className="w-full z-10 h-[360px] sm:h-[440px] lg:h-[520px]"
               style={{
                 width: "100%",
-                height: "520px",
-                minHeight: "400px",
+                minHeight: "320px",
                 cursor: isPickingCoord ? "crosshair" : "grab",
               }}
             />
 
             {/* Bottom Overlay Status Bar */}
-            <div className="bg-slate-900 text-slate-300 px-3.5 sm:px-4 py-2.5 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-slate-800">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <Radio className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <span>
-                    Menampilkan <strong>{filteredFacilities.length}</strong> dari{" "}
-                    <strong>{facilities.length}</strong> Faskes
-                  </span>
-                </div>
-
-                {selectedFacility && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      detailPanelRef.current?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                      })
-                    }
-                    className="lg:hidden text-[11px] font-bold text-emerald-400 underline shrink-0"
-                  >
-                    Lihat Detail RS &darr;
-                  </button>
-                )}
+            <div className="bg-slate-900 text-slate-300 px-3.5 sm:px-4 py-2 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-t border-slate-800">
+              <div className="flex items-center gap-2">
+                <Radio className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>
+                  Menampilkan <strong>{filteredFacilities.length}</strong> dari{" "}
+                  <strong>{facilities.length}</strong> Faskes
+                </span>
               </div>
               <div className="font-mono text-[10px] sm:text-[11px] text-slate-400">
                 CARTO Tiles • WGS 1984 (EPSG:4326) • Cakupan NKRI
               </div>
             </div>
+
+            {/* Mobile Selected Facility Quick-Card (lg:hidden) */}
+            {selectedFacility && (
+              <div className="lg:hidden bg-slate-950 border-t border-slate-800 p-3.5 space-y-2.5">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span
+                        className="text-[10px] font-bold px-2 py-0.5 rounded text-white"
+                        style={{
+                          backgroundColor: getMatraColor(selectedFacility.organization?.category)
+                            .bg,
+                        }}
+                      >
+                        {getMatraColor(selectedFacility.organization?.category).label} •{" "}
+                        {selectedFacility.code}
+                      </span>
+                      <Badge
+                        variant={
+                          selectedFacility.verificationStatus === "APPROVED"
+                            ? "success"
+                            : selectedFacility.verificationStatus === "SUBMITTED"
+                              ? "warning"
+                              : "danger"
+                        }
+                      >
+                        {selectedFacility.verificationStatus}
+                      </Badge>
+                    </div>
+                    <h4 className="text-sm font-bold text-white mt-1 leading-snug">
+                      {selectedFacility.name}
+                    </h4>
+                    <p className="text-[11px] text-slate-400 truncate flex items-center gap-1 mt-0.5">
+                      <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
+                      {selectedFacility.city}, {selectedFacility.province}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => focusFacilityOnMap(selectedFacility)}
+                    className="p-2 rounded-lg bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold shrink-0 hover:bg-emerald-600/30 flex items-center gap-1 active:scale-95"
+                  >
+                    <Navigation className="w-3.5 h-3.5" />
+                    <span className="text-[11px]">Fokus</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-4 gap-1.5 bg-slate-900/90 p-2 rounded-lg border border-slate-800 text-center text-xs">
+                  <div>
+                    <span className="text-[9px] uppercase text-slate-400 font-semibold block">
+                      TT
+                    </span>
+                    <span className="font-bold text-white">{selectedFacility.bedCapacity}</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] uppercase text-slate-400 font-semibold block">
+                      SDM
+                    </span>
+                    <span className="font-bold text-white">
+                      {selectedFacility.totalPersonnelCount}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] uppercase text-slate-400 font-semibold block">
+                      Alkes
+                    </span>
+                    <span className="font-bold text-white">
+                      {selectedFacility.totalEquipmentUnits}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] uppercase text-slate-400 font-semibold block">
+                      Matkes
+                    </span>
+                    <span
+                      className={`font-bold ${
+                        selectedFacility.criticalMaterialCount > 0
+                          ? "text-rose-400"
+                          : "text-emerald-400"
+                      }`}
+                    >
+                      {selectedFacility.criticalMaterialCount}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    detailPanelRef.current?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    })
+                  }
+                  className="w-full py-2 px-3 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors active:scale-95"
+                >
+                  <span>Lihat Inspeksi Rinci Faskes Ini</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-emerald-400" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Quick Horizontal List of Filtered Facilities */}
@@ -1380,7 +1465,7 @@ export function GisMapView({
                 name="code"
                 required
                 placeholder="Mis: FASKES-AD-025"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm uppercase"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm uppercase"
               />
             </div>
 
@@ -1392,7 +1477,7 @@ export function GisMapView({
                 name="name"
                 required
                 placeholder="Mis: RST Tk. II Dustira Cimahi"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm"
               />
             </div>
 
@@ -1403,7 +1488,7 @@ export function GisMapView({
               <select
                 name="organizationId"
                 required
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm bg-white"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm bg-white"
               >
                 {organizations.map((org) => (
                   <option key={org.id} value={org.id}>
@@ -1420,7 +1505,7 @@ export function GisMapView({
               <select
                 name="category"
                 required
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm bg-white"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm bg-white"
               >
                 {FACILITY_CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value}>
@@ -1436,7 +1521,7 @@ export function GisMapView({
                 name="province"
                 required
                 placeholder="Mis: Jawa Barat"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm"
               />
             </div>
 
@@ -1448,7 +1533,7 @@ export function GisMapView({
                 name="city"
                 required
                 placeholder="Mis: Kota Cimahi"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm"
               />
             </div>
 
@@ -1463,7 +1548,7 @@ export function GisMapView({
                 required
                 value={pickedLat}
                 onChange={(e) => setPickedLat(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm font-mono"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm font-mono"
               />
             </div>
 
@@ -1478,7 +1563,7 @@ export function GisMapView({
                 required
                 value={pickedLng}
                 onChange={(e) => setPickedLng(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm font-mono"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm font-mono"
               />
             </div>
 
@@ -1492,7 +1577,7 @@ export function GisMapView({
                 min={0}
                 defaultValue={150}
                 required
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm"
               />
             </div>
 
@@ -1502,7 +1587,7 @@ export function GisMapView({
               </label>
               <select
                 name="operationalStatus"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm bg-white"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm bg-white"
               >
                 {OPERATIONAL_STATUSES.map((s) => (
                   <option key={s.value} value={s.value}>
@@ -1521,7 +1606,7 @@ export function GisMapView({
               name="address"
               required
               placeholder="Jl. dr. Dustira No. 1, Baros, Cimahi Tengah"
-              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm"
             />
           </div>
 
@@ -1534,7 +1619,7 @@ export function GisMapView({
               required
               rows={2}
               placeholder="IGD 24 Jam, ICU, Bedah Trauma, Poliklinik Spesialis, Evakuasi Medis"
-              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm"
             />
           </div>
 

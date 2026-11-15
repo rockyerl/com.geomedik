@@ -206,7 +206,7 @@ export function AppSidebar({ categories, currentUser }: SidebarProps) {
       </aside>
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 px-2 py-1.5 flex items-center justify-around shadow-2xl">
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 px-2 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] flex items-center justify-around shadow-2xl">
         {quickMobileLinks.map((item) => {
           const IconComp = item.icon;
           const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
@@ -216,12 +216,12 @@ export function AppSidebar({ categories, currentUser }: SidebarProps) {
               href={item.href}
               onClick={() => setIsOpenMobile(false)}
               className={cn(
-                "flex flex-col items-center justify-center gap-0.5 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors min-w-[58px]",
+                "flex flex-col items-center justify-center gap-0.5 px-2 py-1.5 rounded-lg text-[10px] font-semibold transition-colors min-w-[56px] active:scale-95",
                 active ? "text-emerald-400 bg-emerald-500/10" : "text-slate-400 hover:text-white"
               )}
             >
-              <IconComp className="w-4 h-4" />
-              <span>{item.label}</span>
+              <IconComp className="w-4 h-4 shrink-0" />
+              <span className="truncate">{item.label}</span>
             </Link>
           );
         })}
@@ -230,11 +230,11 @@ export function AppSidebar({ categories, currentUser }: SidebarProps) {
           type="button"
           onClick={() => setIsOpenMobile(true)}
           className={cn(
-            "flex flex-col items-center justify-center gap-0.5 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-colors min-w-[58px]",
+            "flex flex-col items-center justify-center gap-0.5 px-2 py-1.5 rounded-lg text-[10px] font-semibold transition-colors min-w-[56px] active:scale-95",
             isOpenMobile ? "text-emerald-400 bg-emerald-500/10" : "text-slate-400 hover:text-white"
           )}
         >
-          <Menu className="w-4 h-4" />
+          <Menu className="w-4 h-4 shrink-0" />
           <span>Menu</span>
         </button>
       </nav>

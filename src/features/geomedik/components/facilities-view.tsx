@@ -238,7 +238,7 @@ export function FacilitiesView({ facilities, organizations, canManage }: Facilit
                 name="code"
                 required
                 placeholder="Mis: FASKES-AD-030"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm uppercase font-mono"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm uppercase font-mono"
               />
             </div>
 
@@ -250,7 +250,7 @@ export function FacilitiesView({ facilities, organizations, canManage }: Facilit
                 name="name"
                 required
                 placeholder="Mis: RS Tk. II dr. AK Gani Palembang"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm"
               />
             </div>
 
@@ -260,7 +260,7 @@ export function FacilitiesView({ facilities, organizations, canManage }: Facilit
               </label>
               <select
                 name="organizationId"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm bg-white"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm bg-white"
               >
                 {organizations.map((o) => (
                   <option key={o.id} value={o.id}>
@@ -276,7 +276,7 @@ export function FacilitiesView({ facilities, organizations, canManage }: Facilit
               </label>
               <select
                 name="category"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm bg-white"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm bg-white"
               >
                 {FACILITY_CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value}>
@@ -292,7 +292,7 @@ export function FacilitiesView({ facilities, organizations, canManage }: Facilit
                 name="province"
                 required
                 placeholder="Mis: Sumatera Selatan"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm"
               />
             </div>
 
@@ -304,7 +304,7 @@ export function FacilitiesView({ facilities, organizations, canManage }: Facilit
                 name="city"
                 required
                 placeholder="Mis: Kota Palembang"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm"
               />
             </div>
 
@@ -318,7 +318,7 @@ export function FacilitiesView({ facilities, organizations, canManage }: Facilit
                 step="0.0001"
                 defaultValue="-2.9909"
                 required
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm font-mono"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm font-mono"
               />
             </div>
 
@@ -332,7 +332,7 @@ export function FacilitiesView({ facilities, organizations, canManage }: Facilit
                 step="0.0001"
                 defaultValue="104.7567"
                 required
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm font-mono"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm font-mono"
               />
             </div>
 
@@ -346,7 +346,7 @@ export function FacilitiesView({ facilities, organizations, canManage }: Facilit
                 min={0}
                 defaultValue={220}
                 required
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm"
               />
             </div>
 
@@ -356,7 +356,7 @@ export function FacilitiesView({ facilities, organizations, canManage }: Facilit
               </label>
               <select
                 name="operationalStatus"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm bg-white"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm bg-white"
               >
                 {OPERATIONAL_STATUSES.map((s) => (
                   <option key={s.value} value={s.value}>
@@ -375,7 +375,7 @@ export function FacilitiesView({ facilities, organizations, canManage }: Facilit
               name="address"
               required
               placeholder="Jl. Merdeka No. 1, Bukit Kecil, Palembang"
-              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm"
             />
           </div>
 
@@ -388,7 +388,7 @@ export function FacilitiesView({ facilities, organizations, canManage }: Facilit
               required
               rows={2}
               placeholder="IGD 24 Jam, ICU, Bedah Umum, Evakuasi Medis"
-              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm"
+              className="w-full px-3 py-2 rounded-lg border border-slate-200 text-base sm:text-sm"
             />
           </div>
 

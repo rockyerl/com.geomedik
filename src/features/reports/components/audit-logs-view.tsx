@@ -403,7 +403,52 @@ export function AuditLogsView({ logs, facilities = [] }: AuditLogsViewProps) {
           </span>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Mobile Audit Log Cards View (md:hidden) */}
+        <div className="md:hidden divide-y divide-slate-100">
+          {logs.length === 0 ? (
+            <div className="p-6 text-center text-slate-400 text-xs">
+              Belum ada rekaman audit log.
+            </div>
+          ) : (
+            logs.map((log) => (
+              <div key={log.id} className="p-4 space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <Badge
+                    variant={
+                      log.action.includes("DELETE")
+                        ? "danger"
+                        : log.action.includes("CREATE")
+                          ? "success"
+                          : "default"
+                    }
+                  >
+                    {log.action}
+                  </Badge>
+                  <span className="text-[11px] text-slate-400 flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {formatDate(log.createdAt)}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-slate-900">{log.actorEmail || "Sistem"}</span>
+                  <span className="font-mono text-[11px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                    {log.resource}
+                  </span>
+                </div>
+
+                {log.details && (
+                  <p className="text-[11px] font-mono text-slate-600 bg-slate-50 p-2 rounded border border-slate-100 break-all">
+                    {log.details}
+                  </p>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Desktop Table View (hidden md:block) */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-sm text-slate-600">
             <thead className="bg-slate-50 border-b border-slate-100 text-xs uppercase font-semibold text-slate-500">
               <tr>
@@ -431,7 +476,15 @@ export function AuditLogsView({ logs, facilities = [] }: AuditLogsViewProps) {
                       {log.actorEmail || "Sistem"}
                     </td>
                     <td className="px-6 py-3.5">
-                      <Badge variant={log.action.includes("DELETE") ? "danger" : "default"}>
+                      <Badge
+                        variant={
+                          log.action.includes("DELETE")
+                            ? "danger"
+                            : log.action.includes("CREATE")
+                              ? "success"
+                              : "default"
+                        }
+                      >
                         {log.action}
                       </Badge>
                     </td>
