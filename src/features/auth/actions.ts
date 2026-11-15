@@ -52,7 +52,9 @@ export async function loginAction(
     };
   }
 
-  redirect("/dashboard");
+  return {
+    success: true,
+  };
 }
 
 export async function logoutAction(): Promise<void> {

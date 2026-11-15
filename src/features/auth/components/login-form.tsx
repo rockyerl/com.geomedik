@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { loginAction, type ActionResult } from "../actions";
 import { Lock, Mail, Loader2, AlertCircle, Shield, Check } from "lucide-react";
 
 export function LoginForm() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,10 +29,17 @@ export function LoginForm() {
 
     try {
       const res = await loginAction(null, formData);
-      setIsSubmitting(false);
 
       if (res && !res.success) {
+        setIsSubmitting(false);
         setResult(res);
+        return;
+      }
+
+      if (res?.success) {
+        // Successful login: perform clean navigation to dashboard without flashing error alert
+        router.push("/dashboard");
+        router.refresh();
       }
     } catch {
       setIsSubmitting(false);
