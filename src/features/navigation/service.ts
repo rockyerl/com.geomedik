@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import { db, ensureDbReady } from "@/db";
 import { navigationMenus, type NavigationMenu } from "@/db/schema";
 import { asc, eq } from "drizzle-orm";
 import type { SessionPayload } from "@/lib/auth/session";
@@ -17,6 +17,8 @@ export async function getDynamicSidebarNavigation(
   session: SessionPayload | null | undefined
 ): Promise<NavigationCategoryGroup[]> {
   if (!session) return [];
+
+  await ensureDbReady();
 
   // Query all active navigation menus
   const allMenus = await db

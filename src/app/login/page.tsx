@@ -1,5 +1,5 @@
 import React from "react";
-import { LoginForm } from "@/features/auth";
+import { LoginForm } from "@/features/auth/components/login-form";
 import { Crosshair, ShieldCheck } from "lucide-react";
 
 export default function LoginPage() {

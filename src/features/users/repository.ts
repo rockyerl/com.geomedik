@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import { db, ensureDbReady } from "@/db";
 import { users, roles, type User, type Role } from "@/db/schema";
 import { eq, like, or, and, desc, sql } from "drizzle-orm";
 import { randomUUID } from "crypto";
@@ -11,6 +11,7 @@ export async function getUsersList(options?: {
   search?: string;
   roleId?: string;
 }): Promise<UserWithRole[]> {
+  await ensureDbReady();
   const conditions = [];
 
   if (options?.search) {
@@ -36,6 +37,7 @@ export async function getUsersList(options?: {
 }
 
 export async function getUserById(id: string): Promise<UserWithRole | null> {
+  await ensureDbReady();
   const user = await db.query.users.findFirst({
     where: eq(users.id, id),
     with: {
@@ -47,6 +49,7 @@ export async function getUserById(id: string): Promise<UserWithRole | null> {
 }
 
 export async function getUserByEmail(email: string): Promise<User | null> {
+  await ensureDbReady();
   const user = await db.query.users.findFirst({
     where: eq(users.email, email.toLowerCase()),
   });
@@ -61,6 +64,7 @@ export async function insertUser(data: {
   roleId: string;
   isActive: boolean;
 }): Promise<User> {
+  await ensureDbReady();
   const id = randomUUID();
   const now = new Date();
 
@@ -92,6 +96,7 @@ export async function updateUserRecord(
     passwordHash?: string;
   }
 ): Promise<User> {
+  await ensureDbReady();
   const now = new Date();
   const updateData: Partial<typeof users.$inferInsert> = {
     name: data.name,
@@ -115,10 +120,12 @@ export async function updateUserRecord(
 }
 
 export async function deleteUserRecord(id: string): Promise<void> {
+  await ensureDbReady();
   await db.delete(users).where(eq(users.id, id));
 }
 
 export async function countSuperAdmins(): Promise<number> {
+  await ensureDbReady();
   const [result] = await db
     .select({ count: sql<number>`count(*)` })
     .from(users)

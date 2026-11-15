@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { db } from "@/db";
+import { db, ensureDbReady } from "@/db";
 import { auditLogs } from "@/db/schema";
 
 export interface LogAuditParams {
@@ -13,6 +13,7 @@ export interface LogAuditParams {
 
 export async function logAudit(params: LogAuditParams): Promise<void> {
   try {
+    await ensureDbReady();
     await db.insert(auditLogs).values({
       id: randomUUID(),
       actorId: params.actorId || null,

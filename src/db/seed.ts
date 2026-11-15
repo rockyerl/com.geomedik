@@ -13,7 +13,7 @@ import {
 } from "./schema";
 import { hashPassword } from "../lib/auth/password";
 
-interface FacilitySeedSpec {
+export interface FacilitySeedSpec {
   id: string;
   code: string;
   name: string;
@@ -38,7 +38,7 @@ interface FacilitySeedSpec {
   verifiedBy: string | null;
 }
 
-const HUNDRED_FACILITIES: FacilitySeedSpec[] = [
+export const HUNDRED_FACILITIES: FacilitySeedSpec[] = [
   // =========================================================================
   // KEMHAN RI & MABES TNI (4 Faskes: #1 - #4)
   // =========================================================================
@@ -1887,7 +1887,7 @@ const HUNDRED_FACILITIES: FacilitySeedSpec[] = [
   },
 ];
 
-async function main() {
+export async function seedGeomedikDatabase() {
   console.log("🌱 Starting Geomedik Kemhan RI database seeding (100 National Facilities)...");
 
   // Clear existing records in foreign-key-safe order
@@ -2027,9 +2027,7 @@ async function main() {
     },
   ];
 
-  for (const perm of defaultPermissions) {
-    await db.insert(permissions).values(perm);
-  }
+  await db.insert(permissions).values(defaultPermissions);
 
   // 2. Seed Navigation Menus
   console.log("-> Seeding navigation menus...");
@@ -2176,9 +2174,7 @@ async function main() {
     },
   ];
 
-  for (const menu of defaultMenus) {
-    await db.insert(navigationMenus).values(menu);
-  }
+  await db.insert(navigationMenus).values(defaultMenus);
 
   // 3. Seed Roles
   console.log("-> Seeding default roles...");
@@ -2216,20 +2212,18 @@ async function main() {
     },
   ];
 
-  for (const r of defaultRoles) {
-    await db.insert(roles).values(r);
-  }
+  await db.insert(roles).values(defaultRoles);
 
-  // 4. Assign Permissions to Roles
+  // 4. Assign Permissions to Roles (batch insert)
   console.log("-> Assigning permissions to roles...");
 
-  for (const perm of defaultPermissions) {
-    await db.insert(rolePermissions).values({
+  await db.insert(rolePermissions).values(
+    defaultPermissions.map((perm) => ({
       id: `rp-super-${perm.id}`,
       roleId: "role-super-admin",
       permissionId: perm.id,
-    });
-  }
+    }))
+  );
 
   const adminPermIds = [
     "perm-dashboard-view",
@@ -2245,13 +2239,13 @@ async function main() {
     "perm-roles-read",
     "perm-reports-view",
   ];
-  for (const permId of adminPermIds) {
-    await db.insert(rolePermissions).values({
+  await db.insert(rolePermissions).values(
+    adminPermIds.map((permId) => ({
       id: `rp-admin-${permId}`,
       roleId: "role-admin",
       permissionId: permId,
-    });
-  }
+    }))
+  );
 
   const staffPermIds = [
     "perm-dashboard-view",
@@ -2262,13 +2256,13 @@ async function main() {
     "perm-resources-view",
     "perm-resources-manage",
   ];
-  for (const permId of staffPermIds) {
-    await db.insert(rolePermissions).values({
+  await db.insert(rolePermissions).values(
+    staffPermIds.map((permId) => ({
       id: `rp-staff-${permId}`,
       roleId: "role-staff",
       permissionId: permId,
-    });
-  }
+    }))
+  );
 
   // 5. Seed Default Users
   console.log("-> Seeding default users with secure bcrypt hash...");
@@ -2307,9 +2301,7 @@ async function main() {
     },
   ];
 
-  for (const u of defaultUsers) {
-    await db.insert(users).values(u);
-  }
+  await db.insert(users).values(defaultUsers);
 
   // 6. Seed 27 Master Organizations covering all Kotama/Kesdam, Lantamal, and Koopsud
   console.log("-> Seeding 27 Master Organisasi Kemhan & TNI...");
@@ -2641,14 +2633,12 @@ async function main() {
     },
   ];
 
-  for (const org of seedOrganizations) {
-    await db.insert(organizations).values(org);
-  }
+  await db.insert(organizations).values(seedOrganizations);
 
   // 7. Seed all 100 Health Facilities
   console.log(`-> Seeding ${HUNDRED_FACILITIES.length} Fasilitas Kesehatan Geomedik Nasional...`);
-  for (const fac of HUNDRED_FACILITIES) {
-    await db.insert(healthFacilities).values({
+  await db.insert(healthFacilities).values(
+    HUNDRED_FACILITIES.map((fac) => ({
       id: fac.id,
       code: fac.code,
       name: fac.name,
@@ -2669,11 +2659,15 @@ async function main() {
       reportingPeriod: "2026-TW4",
       createdAt: now,
       updatedAt: now,
-    });
-  }
+    }))
+  );
 
   // 8. Seed Complete SDM, Alkes, and Matkes for EVERY SINGLE ONE of the 100 Facilities
   console.log("-> Seeding SDM, Alkes & Matkes untuk seluruh 100 Fasilitas Kesehatan...");
+
+  const allPersonnelRows: (typeof medicalPersonnel.$inferInsert)[] = [];
+  const allEquipmentRows: (typeof medicalEquipment.$inferInsert)[] = [];
+  const allMaterialRows: (typeof medicalMaterials.$inferInsert)[] = [];
 
   for (let i = 0; i < HUNDRED_FACILITIES.length; i++) {
     const fac = HUNDRED_FACILITIES[i];
@@ -2701,7 +2695,7 @@ async function main() {
     const nurseCiv = Math.max(4, Math.round(36 * tierMultiplier));
     const nurseReq = Math.max(12, Math.round(90 * tierMultiplier));
 
-    await db.insert(medicalPersonnel).values([
+    allPersonnelRows.push(
       {
         id: `sdm-${padded}-a`,
         facilityId: fac.id,
@@ -2736,8 +2730,8 @@ async function main() {
         verificationStatus: "APPROVED",
         reportingPeriod: "2026-TW4",
         updatedAt: now,
-      },
-    ]);
+      }
+    );
 
     // 2 Alkes records per facility (200 Alkes rows total)
     const goodUnits1 =
@@ -2751,7 +2745,7 @@ async function main() {
     const majorDamage2 = idxNum % 13 === 0 ? 1 : 0;
     const totalUnits2 = goodUnits2 + minorDamage2 + majorDamage2;
 
-    await db.insert(medicalEquipment).values([
+    allEquipmentRows.push(
       {
         id: `alkes-${padded}-a`,
         code: `ALK-${padded}-RAD`,
@@ -2792,8 +2786,8 @@ async function main() {
         nextMaintenanceDate: "2027-02-10",
         verificationStatus: "APPROVED",
         updatedAt: now,
-      },
-    ]);
+      }
+    );
 
     // 2 Matkes records per facility (200 Matkes rows total)
     const isCriticalFacility = fac.operationalStatus === "SIAGA_DARURAT" && idxNum % 3 === 0;
@@ -2807,7 +2801,7 @@ async function main() {
     const stockQty2 = idxNum % 9 === 0 ? 85 : 580;
     const status2 = idxNum % 9 === 0 ? "KRITIS" : "AMAN";
 
-    await db.insert(medicalMaterials).values([
+    allMaterialRows.push(
       {
         id: `mat-${padded}-a`,
         code: `MAT-${padded}-IFAK`,
@@ -2837,14 +2831,26 @@ async function main() {
         stockStatus: status2,
         verificationStatus: "APPROVED",
         updatedAt: now,
-      },
-    ]);
+      }
+    );
   }
+
+  await db.insert(medicalPersonnel).values(allPersonnelRows);
+  await db.insert(medicalEquipment).values(allEquipmentRows);
+  await db.insert(medicalMaterials).values(allMaterialRows);
 
   console.log("✅ Seeding 100 Fasilitas Kesehatan Nasional SI-GEOMEDIK completed successfully!");
 }
 
-main().catch((err) => {
-  console.error("❌ Seeding failed:", err);
-  process.exit(1);
-});
+const isExecutedDirectly =
+  typeof process !== "undefined" &&
+  Array.isArray(process.argv) &&
+  process.argv[1] !== undefined &&
+  process.argv[1].replace(/\\/g, "/").endsWith("src/db/seed.ts");
+
+if (isExecutedDirectly) {
+  seedGeomedikDatabase().catch((err) => {
+    console.error("❌ Seeding failed:", err);
+    process.exit(1);
+  });
+}

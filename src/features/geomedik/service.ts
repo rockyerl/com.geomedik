@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import { desc, eq } from "drizzle-orm";
-import { db } from "@/db";
+import { db, ensureDbReady } from "@/db";
 import {
   organizations,
   healthFacilities,
@@ -85,10 +85,12 @@ export interface GeomedikExecutiveSummary {
 }
 
 export async function getOrganizations(): Promise<Organization[]> {
+  await ensureDbReady();
   return db.select().from(organizations).orderBy(organizations.code);
 }
 
 export async function getFacilitiesWithDetails(): Promise<FacilityWithDetails[]> {
+  await ensureDbReady();
   const [allOrgs, allFacs, allPersonnel, allEquipment, allMaterials] = await Promise.all([
     db.select().from(organizations),
     db.select().from(healthFacilities).orderBy(desc(healthFacilities.updatedAt)),
@@ -131,6 +133,7 @@ export async function getFacilitiesWithDetails(): Promise<FacilityWithDetails[]>
 }
 
 export async function getPersonnelWithFacility(): Promise<PersonnelWithFacility[]> {
+  await ensureDbReady();
   const [allPersonnel, allFacs, allOrgs] = await Promise.all([
     db.select().from(medicalPersonnel).orderBy(desc(medicalPersonnel.updatedAt)),
     db.select().from(healthFacilities),
@@ -155,6 +158,7 @@ export async function getPersonnelWithFacility(): Promise<PersonnelWithFacility[
 }
 
 export async function getEquipmentWithFacility(): Promise<EquipmentWithFacility[]> {
+  await ensureDbReady();
   const [allEquipment, allFacs, allOrgs] = await Promise.all([
     db.select().from(medicalEquipment).orderBy(desc(medicalEquipment.updatedAt)),
     db.select().from(healthFacilities),
@@ -178,6 +182,7 @@ export async function getEquipmentWithFacility(): Promise<EquipmentWithFacility[
 }
 
 export async function getMaterialsWithFacility(): Promise<MaterialWithFacility[]> {
+  await ensureDbReady();
   const [allMaterials, allFacs, allOrgs] = await Promise.all([
     db.select().from(medicalMaterials).orderBy(desc(medicalMaterials.updatedAt)),
     db.select().from(healthFacilities),
@@ -201,6 +206,7 @@ export async function getMaterialsWithFacility(): Promise<MaterialWithFacility[]
 }
 
 export async function getGeomedikExecutiveSummary(): Promise<GeomedikExecutiveSummary> {
+  await ensureDbReady();
   const [orgs, facilities, personnel, equipment, materials] = await Promise.all([
     getOrganizations(),
     getFacilitiesWithDetails(),
@@ -277,6 +283,7 @@ export async function createOrganization(
   input: CreateOrganizationInput,
   actor: SessionPayload
 ): Promise<{ success: boolean; error?: string }> {
+  await ensureDbReady();
   const existing = await db
     .select()
     .from(organizations)
@@ -318,6 +325,7 @@ export async function createFacility(
   input: CreateFacilityInput,
   actor: SessionPayload
 ): Promise<{ success: boolean; error?: string }> {
+  await ensureDbReady();
   const existing = await db
     .select()
     .from(healthFacilities)
@@ -381,6 +389,7 @@ export async function verifyFacilityData(
   input: VerifyFacilityInput,
   actor: SessionPayload
 ): Promise<{ success: boolean; error?: string }> {
+  await ensureDbReady();
   const existing = await db
     .select()
     .from(healthFacilities)
@@ -426,6 +435,7 @@ export async function createPersonnelRecord(
   input: CreatePersonnelInput,
   actor: SessionPayload
 ): Promise<{ success: boolean; error?: string }> {
+  await ensureDbReady();
   const now = new Date();
   const id = `sdm-${randomUUID().slice(0, 8)}`;
   const totalAvailable = input.militaryCount + input.civilCount;
@@ -466,6 +476,7 @@ export async function createEquipmentRecord(
   input: CreateEquipmentInput,
   actor: SessionPayload
 ): Promise<{ success: boolean; error?: string }> {
+  await ensureDbReady();
   const existing = await db
     .select()
     .from(medicalEquipment)
@@ -534,6 +545,7 @@ export async function createMaterialRecord(
   input: CreateMaterialInput,
   actor: SessionPayload
 ): Promise<{ success: boolean; error?: string }> {
+  await ensureDbReady();
   const existing = await db
     .select()
     .from(medicalMaterials)
@@ -590,6 +602,7 @@ export async function bulkImportFacilitiesFromCsv(
   skippedCount: number;
   error?: string;
 }> {
+  await ensureDbReady();
   if (rows.length === 0) {
     return {
       success: false,

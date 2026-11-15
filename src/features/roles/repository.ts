@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import { db, ensureDbReady } from "@/db";
 import {
   roles,
   permissions,
@@ -16,6 +16,7 @@ export interface RoleWithDetails extends Role {
 }
 
 export async function getAllRolesWithDetails(): Promise<RoleWithDetails[]> {
+  await ensureDbReady();
   const allRoles = await db.select().from(roles).orderBy(asc(roles.createdAt));
   const result: RoleWithDetails[] = [];
 
@@ -50,6 +51,7 @@ export async function getAllRolesWithDetails(): Promise<RoleWithDetails[]> {
 }
 
 export async function getRoleById(id: string): Promise<RoleWithDetails | null> {
+  await ensureDbReady();
   const role = await db.query.roles.findFirst({
     where: eq(roles.id, id),
   });
@@ -81,6 +83,7 @@ export async function getRoleById(id: string): Promise<RoleWithDetails | null> {
 }
 
 export async function getAllPermissions(): Promise<Permission[]> {
+  await ensureDbReady();
   return db.select().from(permissions).orderBy(asc(permissions.group), asc(permissions.name));
 }
 
@@ -88,6 +91,7 @@ export async function createRoleWithPermissions(
   data: { name: string; code: string; description?: string },
   permissionIds: string[]
 ): Promise<Role> {
+  await ensureDbReady();
   const id = randomUUID();
   const now = new Date();
 
@@ -121,6 +125,7 @@ export async function updateRoleWithPermissions(
   data: { name: string; description?: string },
   permissionIds: string[]
 ): Promise<Role> {
+  await ensureDbReady();
   const now = new Date();
 
   await db.transaction(async (tx) => {
@@ -151,6 +156,7 @@ export async function updateRoleWithPermissions(
 }
 
 export async function deleteRoleById(id: string): Promise<void> {
+  await ensureDbReady();
   await db.transaction(async (tx) => {
     await tx.delete(rolePermissions).where(eq(rolePermissions.roleId, id));
     await tx.delete(roles).where(eq(roles.id, id));

@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import { db, ensureDbReady } from "@/db";
 import { users, rolePermissions, permissions } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { verifyPassword } from "@/lib/auth/password";
@@ -13,9 +13,11 @@ export interface LoginResult {
 }
 
 export async function login(input: LoginInput, ipAddress?: string): Promise<LoginResult> {
+  await ensureDbReady();
+
   // 1. Fetch user by email
   const user = await db.query.users.findFirst({
-    where: eq(users.email, input.email),
+    where: eq(users.email, input.email.toLowerCase()),
     with: {
       role: true,
     },

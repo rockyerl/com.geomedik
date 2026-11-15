@@ -34,7 +34,17 @@ export async function loginAction(
     };
   }
 
-  const result = await login(validation.data);
+  let result: Awaited<ReturnType<typeof login>>;
+  try {
+    result = await login(validation.data);
+  } catch (err) {
+    console.error("[LOGIN ACTION ERROR]", err);
+    return {
+      success: false,
+      error: "Terjadi gangguan koneksi basis data saat memverifikasi akun. Silakan coba kembali.",
+    };
+  }
+
   if (!result.success) {
     return {
       success: false,
