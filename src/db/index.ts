@@ -185,14 +185,12 @@ async function bootstrapDatabaseIfNeeded(): Promise<void> {
     // Table does not exist yet — proceed to create tables & seed
   }
 
-  for (const stmt of SCHEMA_STATEMENTS) {
-    await client.execute(stmt);
-  }
+  await client.executeMultiple(SCHEMA_STATEMENTS.join(";\n"));
 
   const checkAfterCreate = await db.select({ count: sql<number>`count(*)` }).from(schema.users);
   if (Number(checkAfterCreate[0]?.count || 0) === 0) {
     const { seedGeomedikDatabase } = await import("./seed");
-    await seedGeomedikDatabase();
+    await seedGeomedikDatabase(true);
   }
 }
 

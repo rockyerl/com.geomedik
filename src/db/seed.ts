@@ -11,7 +11,6 @@ import {
   medicalEquipment,
   medicalMaterials,
 } from "./schema";
-import { hashPassword } from "../lib/auth/password";
 
 export interface FacilitySeedSpec {
   id: string;
@@ -1887,20 +1886,22 @@ export const HUNDRED_FACILITIES: FacilitySeedSpec[] = [
   },
 ];
 
-export async function seedGeomedikDatabase() {
+export async function seedGeomedikDatabase(skipDelete = false) {
   console.log("🌱 Starting Geomedik Kemhan RI database seeding (100 National Facilities)...");
 
-  // Clear existing records in foreign-key-safe order
-  await db.delete(rolePermissions);
-  await db.delete(navigationMenus);
-  await db.delete(permissions);
-  await db.delete(users);
-  await db.delete(roles);
-  await db.delete(medicalMaterials);
-  await db.delete(medicalEquipment);
-  await db.delete(medicalPersonnel);
-  await db.delete(healthFacilities);
-  await db.delete(organizations);
+  // Clear existing records in foreign-key-safe order if not a fresh bootstrap
+  if (!skipDelete) {
+    await db.delete(rolePermissions);
+    await db.delete(navigationMenus);
+    await db.delete(permissions);
+    await db.delete(users);
+    await db.delete(roles);
+    await db.delete(medicalMaterials);
+    await db.delete(medicalEquipment);
+    await db.delete(medicalPersonnel);
+    await db.delete(healthFacilities);
+    await db.delete(organizations);
+  }
 
   // 1. Seed Permissions
   console.log("-> Seeding permissions...");
@@ -2266,7 +2267,8 @@ export async function seedGeomedikDatabase() {
 
   // 5. Seed Default Users
   console.log("-> Seeding default users with secure bcrypt hash...");
-  const defaultPasswordHash = await hashPassword("Password123!");
+  // Precomputed Cost-12 Bcrypt hash for "Password123!" to ensure instant bootstrap on serverless cold starts
+  const defaultPasswordHash = "$2b$12$/E09O2XoZR6O0krkcMECx.rlGqUDQnPahc75Si7GU4Gm/rJa7s3Da";
 
   const defaultUsers = [
     {

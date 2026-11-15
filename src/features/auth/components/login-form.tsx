@@ -25,11 +25,19 @@ export function LoginForm() {
     formData.set("email", email);
     formData.set("password", password);
 
-    const res = await loginAction(null, formData);
-    setIsSubmitting(false);
+    try {
+      const res = await loginAction(null, formData);
+      setIsSubmitting(false);
 
-    if (res && !res.success) {
-      setResult(res);
+      if (res && !res.success) {
+        setResult(res);
+      }
+    } catch {
+      setIsSubmitting(false);
+      setResult({
+        success: false,
+        error: "Terjadi kendala jaringan saat menghubungi server. Silakan coba kembali.",
+      });
     }
   }
 
